@@ -88,8 +88,7 @@ function autocomplete(obj){
                 console.log(result.message);
             }
         });
-}
-
+} 
 
 $(document).ready(function(){
     setInterval( phraseSwitch, 10000 );
@@ -148,4 +147,20 @@ $(document).ready(function(){
                 }
             });
         });
+        
+        var arrow_array = ['&#8592','&#8595','&#8593'];
+        var current_arrow = 0, next_arrow = 1;
+        $('#sort th a').click(function(){
+            //current_arrow = $('#sort b').text();
+            if(current_arrow<2){
+                current_arrow++;
+            }else{
+                next_arrow = 0;
+            }
+            console.log('current in click'+current_arrow);
+            next_arrow = arrow_next(arrow_array, current_arrow);
+            console.log('next in click'+next_arrow);
+            $('#sort b').html('<b id="arrow">'+next_arrow+'</b>');
+        }); 
     });
+    
