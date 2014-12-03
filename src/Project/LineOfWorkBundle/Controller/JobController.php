@@ -4,7 +4,7 @@ namespace Project\LineOfWorkBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Symfony\Component\HttpFoundation\Response;
 use Project\LineOfWorkBundle\Entity\Job;
 use Project\LineOfWorkBundle\Form\JobType;
 
@@ -15,6 +15,31 @@ use Project\LineOfWorkBundle\Form\JobType;
 class JobController extends Controller
 {
 
+    public function sortAction(Request $request){
+        if($request->isXmlHttpRequest()){
+            $em = $this->getDoctrine()->getManager();
+            $order = $request->request->get('order');
+            $kind = $request->request->get('kind');
+            $category = $request->request->get('category');
+            $cat = $em->getRepository('ProjectLineOfWorkBundle:Category')->findOneBy(
+                array('slug'=>$category));
+            if(!$cat){
+                throw $this->createNotFoundException('Unable to find Category entity');
+            }
+  
+            $jobs = $em->getRepository('ProjectLineOfWorkBundle:Job')->getActiveJobs(
+                $cat->getId(),$this->container->getParameter('max_jobs_on_job_page_per_category'),null,$kind,$order);
+            
+            $jobs_return = $this->render('ProjectLineOfWorkBundle:Job:list_jobs_body.html.twig', array(
+                'jobs' => $jobs,
+            ))->getContent();
+            $result2 = array('jobs'=>$jobs_return, 'success'=>true);
+            $response = new Response(json_encode($result2));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+    }
+    
     /**
      * Lists all Job entities.
      *
@@ -24,7 +49,9 @@ class JobController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         $categories = $em->getRepository('ProjectLineOfWorkBundle:Category')->getWithJobs();
+
         
+            
         foreach($categories as $category){
             $category->setActiveJobs($em->getRepository('ProjectLineOfWorkBundle:Job')->getActiveJobs(
                 $category->getId(),$this->container->getParameter('max_jobs_on_job_page_per_category')));
@@ -35,6 +62,7 @@ class JobController extends Controller
         return $this->render('ProjectLineOfWorkBundle:Job:index.html.twig', array(
             'categories' => $categories,
         ));
+        
     }
     /**
      * Creates a new Job entity.

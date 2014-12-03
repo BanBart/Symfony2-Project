@@ -13,13 +13,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class JobRepository extends EntityRepository
 {
-    public function getActiveJobs($category_id = null, $limit = null, $offset = null){
+    public function getActiveJobs($category_id = null, $limit = null, $offset = null, $kind = 'created_at', $order = 'DESC'){
         $qb = $this->createQueryBuilder('j')
                 ->where('j.expires_at >:date')
                 ->setParameter('date', date('Y-m-d H:i:s', time()))
                 ->andWhere('j.is_activated =:activated')
                 ->setParameter('activated', 1)
-                ->orderBy('j.created_at', 'DESC');
+                ->orderBy('j.'.$kind, $order);
         
         if($category_id){
             $qb->andWhere('j.category = :category_id')
