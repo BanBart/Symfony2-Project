@@ -1,0 +1,20 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Position</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th></th>
+        </tr>
+    </thead>
+    {% for entity in jobs %}
+    <tbody>
+        <tr class="{{ cycle(['even', 'odd'], loop.index) }}" >
+            <td>{{entity.position}}</td>
+            <td>{{entity.company}}</td>
+            <td>{{entity.location}}</td>
+            <td><a href="{{ path('project_line_of_work_job_show', {'id': entity.id}) }}">more details...</a></td>
+        </tr>
+    </tbody>
+    {% endfor %}
+</table>
