@@ -1,6 +1,14 @@
 project_line_of_work_job:
     path:     /
     defaults: { _controller: "ProjectLineOfWorkBundle:Job:index" }
+ 
+project_line_of_work_job_sort:
+    path:   /sort
+    defaults: { _controller: "ProjectLineOfWorkBundle:Job:sort" }
+    requirements:
+        _method: POST
+    options:
+        expose: true
 
 project_line_of_work_job_show:
     path:     /{id}/show

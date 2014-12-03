@@ -88,8 +88,29 @@ function autocomplete(obj){
                 console.log(result.message);
             }
         });
-}
+} 
 
+function sortableList(obj){
+    xhr && xhr.abort && xhr.abort();
+    xhr  =  $.ajax({
+            type        : "POST",
+            url         : Routing.generate('project_line_of_work_job_sort'),
+            data        : obj,
+            dataType    : "json",
+            success     : function(result) {
+                if(result.success){
+                    //console.log(result.jobs);
+                    $('.sort-parm').html(result.jobs).removeClass('sort-parm');
+                    //var array = $.parseJSON(result.query);
+                   // console.log(array);                    
+                    //$('#search_data_list').html(arrayToHtml(array));
+                } 
+            },
+            error: function(result){
+                console.log(result.message);
+            }
+        });
+}
 
 $(document).ready(function(){
     setInterval( phraseSwitch, 10000 );
@@ -148,4 +169,45 @@ $(document).ready(function(){
                 }
             });
         });
+        
+        var arrow_array = ['&#8592','&#8595','&#8593'];
+        var next_arrow = 0;
+        var order = null;
+        var label = null; //hardcoded
+        var cat ; // also hardcoded
+        $('#sort th a').click(function(){
+            $('.sort-parm').removeClass('sort-parm');
+            //current_arrow = $('#sort b').text();
+            $(this).addClass('current_label');
+            $(this).parent().parent().parent().parent().children('tbody').addClass('sort-parm');
+
+            label = $(this).text().toLowerCase().replace(/[^\w\s]/gi, '');
+            cat = $(this).parent().parent().parent().parent().parent().prev().children('h4').children('a').text().toLowerCase();
+            console.log(cat);
+            if(next_arrow < 2){
+                next_arrow++;          
+            }else {
+                next_arrow=0;
+            }
+            if(next_arrow ===1){
+                order = "ASC";
+            }else if(next_arrow===2){
+                order = "DESC";
+            }
+            var obj = {
+                category: cat,
+                kind : label,
+                order : order
+            };
+            $('.current_label b').html('<b id="arrow">'+arrow_array[next_arrow]+'</b>');
+            $('.current_label').removeClass('current_label');
+            if(next_arrow !== 0){
+                $(this).parent().toggleClass('active');
+                sortableList(obj);
+                
+            }else{
+                xhr && xhr.abort && xhr.abort();
+            }
+        }); 
     });
+    
