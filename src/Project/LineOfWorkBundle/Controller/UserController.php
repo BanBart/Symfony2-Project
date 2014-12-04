@@ -17,8 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class UserController extends Controller{
     
     public function profileAction(){
+        $user = $this->getUser();
         return $this->render('ProjectLineOfWorkBundle:User:profile.html.twig', array(
-            'user'=>""
+            'user'=>$user
         ));
     }
     
