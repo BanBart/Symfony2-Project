@@ -171,10 +171,10 @@ $(document).ready(function(){
         });
         
         var arrow_array = ['&#8592','&#8595','&#8593'];
-        var next_arrow = 0;
         var order = null;
         var label = null; //hardcoded
         var cat ; // also hardcoded
+        
         $('#sort th a').click(function(){
             $('.sort-parm').removeClass('sort-parm');
             //current_arrow = $('#sort b').text();
@@ -183,28 +183,54 @@ $(document).ready(function(){
 
             label = $(this).text().toLowerCase().replace(/[^\w\s]/gi, '');
             cat = $(this).parent().parent().parent().parent().parent().prev().children('h4').children('a').text().toLowerCase();
-            console.log(cat);
-            if(next_arrow < 2){
-                next_arrow++;          
-            }else {
-                next_arrow=0;
-            }
-            if(next_arrow ===1){
+            //console.log(cat);
+            var arrow_state = ['arrow_normal','arrow_down','arrow_up'];
+            var next_arrow=1;
+            
+            var current_arrow = $('.current_label').children('b').attr('id');
+            console.log(' + current_arrow '+current_arrow);
+           /* for(var i = 0 ; i<arrow_state.length ; i++){
+                console.log(arrow_state[i]);
+                if(current_arrow === arrow_state[i]){
+                    console.log('arrow find');
+                    next_arrow=i;
+                    //console.log(next_arrow);
+                }
+             
+            }*/
+            //console.log('next arrow '+next_arrow);
+            //console.log(current_arrow);
+            if(current_arrow === arrow_state[2]){
                 order = "ASC";
-            }else if(next_arrow===2){
+            }
+            if(current_arrow === arrow_state[1]){
                 order = "DESC";
+            }
+            
+            for(var i = 0;i<arrow_state.length;i++){
+                //next_arrow++;
+                if(current_arrow === arrow_state[i]){
+                    console.log(current_arrow);
+                    if(i === arrow_state.length -1){
+                        next_arrow = 0;
+                        console.log('next_arrow should be 0--'+next_arrow);
+                    }else{
+                        next_arrow = i+1;
+                        console.log('next_arrow should be '+(i+1)+' '+ next_arrow);
+                    }
+                    
+                }
+                //console.log(next_arrow);
             }
             var obj = {
                 category: cat,
                 kind : label,
                 order : order
             };
-            $('.current_label b').html('<b id="arrow">'+arrow_array[next_arrow]+'</b>');
+            $('.current_label b').replaceWith('<b id="'+arrow_state[next_arrow]+'">'+arrow_array[next_arrow]+'</b>');
             $('.current_label').removeClass('current_label');
             if(next_arrow !== 0){
-                $(this).parent().toggleClass('active');
-                sortableList(obj);
-                
+                sortableList(obj);            
             }else{
                 xhr && xhr.abort && xhr.abort();
             }
